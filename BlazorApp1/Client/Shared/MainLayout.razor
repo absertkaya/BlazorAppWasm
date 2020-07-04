@@ -7,35 +7,33 @@
     <tr>
         <th>Products</th>
     </tr>
-    @foreach(string product in filteredProducts)
+    @foreach(Product product in filteredProducts)
     {
         <tr>
-            <td>
-                @product
-            </td>
+            <ProductComponent @key="product" Product="@product.Name"/>
         </tr>
     }
 </table>
 
 @code {
-    private List<string> products;
-    private List<string> filteredProducts;
+    private List<Product> products;
+    private List<Product> filteredProducts;
     private string filterString = "";
 
     protected override void OnInitialized()
     {
-        products = new List<string>();
+        products = new List<Product>();
 
         for (int i = 0; i < 10000; i++)
         {
-            products.Add("Product " + i);
+            products.Add(new Product(i, "Product " + i));
         }
 
-        filteredProducts = new List<string>(products);
+        filteredProducts = new List<Product>(products);
     }
 
     private void Filter()
     {
-        filteredProducts = products.Where(p => p.Contains(filterString)).ToList();
+        filteredProducts = products.Where(p => p.Name.Contains(filterString)).ToList();
     }
 }
