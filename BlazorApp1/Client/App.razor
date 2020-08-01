@@ -1,17 +1,29 @@
 @inherits LayoutComponentBase
 <input @bind="filterString" />
 <button @onclick="Filter">Filter</button>
-<button>-50</button>
-<button>+50</button>
 
-@foreach(var product in toRenderList)
-{
-    <ProductComponent @key="@product" Product="@product.Name"/>
-}
+<button disabled="@(filteredProducts.IndexOf(toRenderList[0]) == 0 ? true : false)">-50</button>
+
+<button @onclick="Next50">+50</button>
+
+<table>
+    <tr>
+        <th>Products</th>
+    </tr>
+    @foreach (var product in toRenderList)
+    {
+        <tr>
+            <td>
+                <ProductComponent @key="@product" Product="@product.Name" />
+            </td>
+        </tr>
+    }
+</table>
+
 
 @code {
     private List<Product> products;
-    private IList<Product> filteredProducts;
+    private List<Product> filteredProducts;
     private IList<Product> toRenderList;
     private string filterString = "";
 
@@ -21,15 +33,20 @@
 
         for (int i = 0; i < 10000; i++)
         {
-            products.Add(new Product(i, "Product " + i));
+            products.Add(new Product(i, "Product " + (i + 1)));
         }
 
         filteredProducts = new List<Product>(products);
-        toRenderList = products.GetRange(0, 49);
+        toRenderList = filteredProducts.GetRange(0, 50);
     }
 
     private void Filter()
     {
         filteredProducts = products.Where(p => p.Name.Contains(filterString)).ToList();
+    }
+
+    private void Next50()
+    {
+        toRenderList = filteredProducts.GetRange(filteredProducts.IndexOf(toRenderList[toRenderList.Count - 1]) + 1, 50);
     }
 }
