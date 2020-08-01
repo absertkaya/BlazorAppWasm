@@ -2,7 +2,7 @@
 <input @bind="filterString" />
 <button @onclick="Filter">Filter</button>
 
-<button disabled="@(filteredProducts.IndexOf(toRenderList[0]) == 0 ? true : false)">-50</button>
+<button @onclick="Previous50" disabled="@(filteredProducts.IndexOf(toRenderList[0]) == 0 ? true : false)">-50</button>
 
 <button @onclick="Next50">+50</button>
 
@@ -43,10 +43,31 @@
     private void Filter()
     {
         filteredProducts = products.Where(p => p.Name.Contains(filterString)).ToList();
+        toRenderList = filteredProducts.GetRange(0, 50);
     }
 
     private void Next50()
     {
-        toRenderList = filteredProducts.GetRange(filteredProducts.IndexOf(toRenderList[toRenderList.Count - 1]) + 1, 50);
+        try
+        {
+            toRenderList = filteredProducts.GetRange(filteredProducts.IndexOf(toRenderList[toRenderList.Count - 1]) + 1, 50);
+        } catch (Exception ex)
+        {
+            toRenderList = filteredProducts.GetRange(0, 50);
+        }
     }
+
+    private void Previous50()
+    {
+        try
+        {
+            toRenderList = filteredProducts.GetRange(filteredProducts.IndexOf(toRenderList[0]) - 50, 50);
+        }
+        catch (Exception ex)
+        {
+            toRenderList = filteredProducts.GetRange(filteredProducts.Count - 50, 50);
+        }
+    }
+
+
 }
